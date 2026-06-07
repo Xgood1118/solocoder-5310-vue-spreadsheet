@@ -204,6 +204,7 @@ const sheetData = reactive({})
 const history = reactive(new HistoryManager())
 
 const formulaEngine = new FormulaEngine()
+const computedVersion = ref(0)
 
 const selectionStart = reactive({ row: 0, col: 0 })
 const selectionEnd = reactive({ row: 0, col: 0 })
@@ -324,9 +325,17 @@ function setCell(row, col, cell) {
   } else {
     sheetData[currentSheetId.value][key] = cell
   }
+  
+  const sheetName = currentSheet.value?.name
+  if (sheetName && formulaEngine.sheets[sheetName]) {
+    formulaEngine.updateCell(sheetName, col, row, cell)
+    formulaEngine.invalidateAll()
+    computedVersion.value++
+  }
 }
 
 function getComputedValue(row, col) {
+  void computedVersion.value
   const cell = getCell(row, col)
   if (!cell || cell.value === undefined || cell.value === null) {
     return undefined

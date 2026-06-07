@@ -387,6 +387,19 @@ class FormulaEngine {
     this.sheets[name] = data
   }
 
+  updateCell(sheetName, col, row, cell) {
+    const sheet = this.sheets[sheetName]
+    if (!sheet) return
+    
+    while (sheet.length <= row) {
+      sheet.push([])
+    }
+    while (sheet[row].length <= col) {
+      sheet[row].push(null)
+    }
+    sheet[row][col] = cell
+  }
+
   getCell(sheetName, col, row) {
     const sheet = this.sheets[sheetName]
     if (!sheet) return null
